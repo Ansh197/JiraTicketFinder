@@ -23,14 +23,14 @@ auth = (JIRA_EMAIL, JIRA_API_TOKEN)
 url = f"https://{JIRA_DOMAIN}/rest/api/3/search"
 
 # Pagination setup
-max_results = 50
+max_results = 200
 start_at = 0
 headers = {"Accept": "application/json"}
 all_issues = []
 
 issue_count = 0 
 
-while True and start_at<50:
+while True and start_at<2000:
     query = {
         'jql': f'project = {JIRA_PROJECT_KEY}',
         'maxResults': max_results,
@@ -84,6 +84,10 @@ with open("jira_tickets_all.csv", "w", encoding="utf-8", newline='') as csvfile:
             "Created Date": fields.get("created"),
             "Comments": ""
         }
+
+        # Removing alerts
+        if issue_data['Issue Type'] == 'Alerts':
+            continue
 
         # Parse description
         description = fields.get("description")
