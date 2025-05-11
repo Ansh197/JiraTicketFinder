@@ -23,14 +23,14 @@ auth = (JIRA_EMAIL, JIRA_API_TOKEN)
 url = f"https://{JIRA_DOMAIN}/rest/api/3/search"
 
 # Pagination setup
-max_results = 200
+max_results = 500
 start_at = 0
 headers = {"Accept": "application/json"}
 all_issues = []
 
 issue_count = 0 
 
-while True and start_at<2000:
+while True :
     query = {
         'jql': f'project = {JIRA_PROJECT_KEY}',
         'maxResults': max_results,
@@ -41,7 +41,7 @@ while True and start_at<2000:
     response = requests.get(url, params=query, auth=auth)
 
     if response.status_code != 200:
-        print(f"❌ Error fetching issues: {response.status_code}")
+        print(f"Error fetching issues: {response.status_code}")
         print(response.text)
         break
 
@@ -102,8 +102,24 @@ with open("jira_tickets_all.csv", "w", encoding="utf-8", newline='') as csvfile:
 
         # Fetch comments
         comments_url = f"https://{JIRA_DOMAIN}/rest/api/3/issue/{issue_key}/comment"
-        comments_response = requests.get(comments_url, headers=headers, auth=auth)
-        comments_data = comments_response.json().get("comments", [])
+        
+        # Adding Error Handling
+
+        try:
+            comments_response = requests.get(comments_url, headers=headers, auth=auth, timeout=10)
+            comments_response.raise_for_status()
+            comments_data = comments_response.json().get("comments", [])
+
+        except requests.exceptions.HTTPError as http_err:
+            print(f"[HTTP Error] Issue {issue_key} → {http_err}")
+        except requests.exceptions.ConnectionError as conn_err:
+            print(f"[Connection Error] Issue {issue_key} → {conn_err}")
+        except requests.exceptions.Timeout as timeout_err:
+            print(f"[Timeout] Issue {issue_key} → {timeout_err}")
+        except requests.exceptions.RequestException as req_err:
+            print(f"[Request Exception] Issue {issue_key} → {req_err}")
+        except Exception as e:
+            print(f"[Unexpected Error] Issue {issue_key} → {e}")
 
         comment_lines = []
         for comment in comments_data:
@@ -127,5 +143,6 @@ with open("jira_tickets_all.csv", "w", encoding="utf-8", newline='') as csvfile:
         issue_count += 1
         print(f"Issue_Count: {issue_count}, IssueKey: {issue_key}")
 
-print(f"\n✅ Total issues saved to jira_tickets_all.csv: {len(all_issues)}")
+print(f"\n Total issues saved to jira_tickets_all.csv: {len(all_issues)}")
+# Ticket info saved till SH-5772
 
