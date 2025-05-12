@@ -1,11 +1,16 @@
 import joblib
 import numpy as np
 from sentence_transformers import SentenceTransformer
+import os
+
+# Setting relative paths
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+models_path = os.path.join(base_dir, 'models')
 
 # Load saved assets
-df = joblib.load("models/ticket_data.pkl")
-embeddings = np.load("models/embeddings.npy")
-nn_model = joblib.load("models/nn_model.pkl")
+df = joblib.load(os.path.join(models_path,'ticket_data.pkl'))
+embeddings = np.load(os.path.join(models_path,'embeddings.npy'))
+nn_model = joblib.load(os.path.join(models_path,'nn_model.pkl'))
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Function to find similar tickets
@@ -45,9 +50,4 @@ def find_similar_tickets(ticket_key, top_k=2):
 
     return similar_tickets
 
-# 🔍 Example: find top 2 tickets similar to ticket 'SH-5646'
-result = find_similar_tickets("SH-5700", top_k=5)
-for i in result :
-    for key in i :
-        print(key," : ",i[key])
-    print('\n')
+
