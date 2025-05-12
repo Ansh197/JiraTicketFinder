@@ -7,5 +7,13 @@ def home():
     name = 'Ansh'
     return render_template('index.html',name = name)
 
+@app.route('/form',methods = ['GET','POST'])
+def ticketForm():
+    if request.method == 'POST':
+        ticketNumber = request.form.get('ticketNumber')
+        print(ticketNumber)
+
+    return render_template('ticketForm.html')
+
 if __name__ == '__main__':
     app.run()
