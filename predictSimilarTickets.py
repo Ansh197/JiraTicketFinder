@@ -23,14 +23,31 @@ def find_similar_tickets(ticket_key, top_k=2):
     # Find top K most similar tickets (excluding the query ticket itself)
     distances, indices = nn_model.kneighbors(query_embedding, n_neighbors=top_k + 1)
 
-    similar_indices = indices[0]
-    similar_keys = df.iloc[similar_indices]['Key'].tolist()
-    
-    # Remove the original ticket from the results
-    similar_keys = [key for key in similar_keys if key != ticket_key][:top_k]
-    
-    return df[df['Key'].isin(similar_keys)][['Key', 'Summary', 'Description']]
+    similar_tickets = []
+    for idx, dist in zip(indices[0], distances[0]):
+        key = df.iloc[idx]['Key']
+        if key == ticket_key:
+            continue  # skip the query ticket itself
+
+        similarity = 1 - dist  # cosine similarity = 1 - cosine distance
+        summary = df.iloc[idx]['Summary']
+        description = df.iloc[idx]['Description']
+        
+        similar_tickets.append({
+            'Key': key,
+            'Similarity': round(similarity, 4),
+            'Summary': summary,
+            'Description': description
+        })
+
+        if len(similar_tickets) == top_k:
+            break
+
+    return similar_tickets
 
 # 🔍 Example: find top 2 tickets similar to ticket 'SH-5646'
-result = find_similar_tickets("SH-5646", top_k=2)
-print(result)
+result = find_similar_tickets("SH-5700", top_k=5)
+for i in result :
+    for key in i :
+        print(key," : ",i[key])
+    print('\n')

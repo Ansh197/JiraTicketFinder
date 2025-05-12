@@ -23,7 +23,7 @@ print("Generating embeddings...")
 embeddings = model.encode(df['full_text'].tolist(), show_progress_bar=True)
 
 # Train a Nearest Neighbors model for similarity search
-nn_model = NearestNeighbors(n_neighbors=5, metric='cosine')
+nn_model = NearestNeighbors(n_neighbors=7, metric='cosine')
 nn_model.fit(embeddings)
 
 # Save model and data
