@@ -3,16 +3,13 @@ from services.predictor import find_similar_tickets
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/',methods = ['GET','POST'])
 def home():
-    name = 'Ansh'
-    return render_template('index.html',name = name)
-
-@app.route('/form',methods = ['GET','POST'])
-def ticketForm():
     result = None
     if request.method == 'POST':
         ticketNumber = request.form.get('ticketNumber')
+        ticketNumber = 'SH-'+ticketNumber
+        print(ticketNumber)
         res = find_similar_tickets(ticketNumber, top_k=5)
         if res[0] == False:
             return render_template('ticketNotFound.html')
@@ -22,6 +19,6 @@ def ticketForm():
     return render_template('ticketForm.html',result = result)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
 
 

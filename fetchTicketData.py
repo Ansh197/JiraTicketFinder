@@ -6,15 +6,19 @@ import csv
 # Load only the API token from .env
 load_dotenv()
 JIRA_API_TOKEN = os.getenv("JIRA_API_TOKEN")
+JIRA_EMAIL = os.getenv("JIRA_EMAIL")
+JIRA_DOMAIN = os.getenv("JIRA_DOMAIN")
+JIRA_PROJECT_KEY = os.getenv("JIRA_PROJECT_KEY")
 
 # 🔒 Still secure: API token stays out of the code
 if not JIRA_API_TOKEN:
     raise ValueError("API token not found in .env file!")
-
-# Hardcoded details (based on your example)
-JIRA_EMAIL = "ansh.sharma@kimbal.io"  # <-- Replace with your real Atlassian email
-JIRA_DOMAIN = "sinhaludyog.atlassian.net"
-JIRA_PROJECT_KEY = "SH"
+if not JIRA_EMAIL:
+    raise ValueError("Email not found in .env file!")
+if not JIRA_DOMAIN:
+    raise ValueError("Domain not found in .env file!")
+if not JIRA_PROJECT_KEY:
+    raise ValueError("Project Key not found in .env file!")
 
 # Authentication
 auth = (JIRA_EMAIL, JIRA_API_TOKEN)

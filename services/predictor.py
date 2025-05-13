@@ -30,6 +30,9 @@ def find_similar_tickets(ticket_key, top_k=2):
     # Find top K most similar tickets (excluding the query ticket itself)
     distances, indices = nn_model.kneighbors(query_embedding, n_neighbors=top_k + 1)
 
+    summaryLimit = 50
+    descriptionLimit = 210
+
     similar_tickets = []
     for idx, dist in zip(indices[0], distances[0]):
         key = df.iloc[idx]['Key']
@@ -42,6 +45,17 @@ def find_similar_tickets(ticket_key, top_k=2):
         assignee = df.iloc[idx]['Assignee']
         status = df.iloc[idx]['Status']
         createdDate = df.iloc[idx]['Created Date']
+
+        # Cleaning the result
+        description = ' '.join(description.split())
+        if len(description) > descriptionLimit:
+            description = description[:descriptionLimit - 3] + '...'
+        
+        summary = ' '.join(summary.split())
+        if len(summary) > summaryLimit:
+            summary = summary[:summaryLimit - 3] + '...'
+        
+        createdDate = createdDate[:10]
 
         
         similar_tickets.append({

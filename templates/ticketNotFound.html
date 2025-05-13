@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Error</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='ticketForm.css') }}">
 </head>
 <body>
-    <h1>Error!! Ticket Not Found</h1>
+    <p class="error">The ticket number you entered is either incorrect or the ticket might be an Alert !!</p>
+    <p class="retry">Please click <a href="{{url_for('home')}}">here</a> to try again.</p>
 </body>
 </html>
