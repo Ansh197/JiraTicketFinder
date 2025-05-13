@@ -2,9 +2,12 @@ import joblib
 import numpy as np
 from sentence_transformers import SentenceTransformer
 import os
+from dotenv import load_dotenv
 
-
-JIRA_PROJECT_KEY = os.getenv("JIRA_PROJECT_KEY")
+load_dotenv()
+JIRA_PROJECT_KEY = os.getenv("JIRA_PROJECT_KEY","JIRA")
+if JIRA_PROJECT_KEY is None:
+    raise ValueError("JIRA_PROJECT_KEY is not set in environment variables.")
 
 # Setting relative paths
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -18,7 +21,7 @@ model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Function to find similar tickets
 def find_similar_tickets(ticket_key, top_k=2):
-    ticket_key = JIRA_PROJECT_KEY + ticket_key
+    ticket_key = JIRA_PROJECT_KEY +"-"+ ticket_key
     ticketFound = True
     # Get the ticket's full text
     row = df[df['Key'] == ticket_key]
@@ -76,5 +79,4 @@ def find_similar_tickets(ticket_key, top_k=2):
             break
 
     return [ticketFound,similar_tickets]
-
 
