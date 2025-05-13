@@ -8,7 +8,7 @@ def home():
     result = None
     if request.method == 'POST':
         ticketNumber = request.form.get('ticketNumber')
-        ticketNumber = 'SH-'+ticketNumber
+        ticketNumber = ticketNumber
         print(ticketNumber)
         res = find_similar_tickets(ticketNumber, top_k=5)
         if res[0] == False:
@@ -17,8 +17,5 @@ def home():
             result = res[1]
 
     return render_template('ticketForm.html',result = result)
-
-if __name__ == '__main__':
-    app.run(debug=True)
 
 
