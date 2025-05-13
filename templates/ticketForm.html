@@ -24,5 +24,14 @@
       <input type="submit" value="submit">
     </form>
     </div>
+    {% if result %}
+    {% for i in result %}
+    <div class="container">
+      <h1>{{i['Key']}}</h1>
+      <h2>{{i['Summary']}}</h2>
+      <h3>{{i['Description']}}</h3>
+    </div>
+    {% endfor %}
+    {% endif %}
 </body>
 </html>

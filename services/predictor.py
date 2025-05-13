@@ -15,10 +15,12 @@ model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Function to find similar tickets
 def find_similar_tickets(ticket_key, top_k=2):
+    ticketFound = True
     # Get the ticket's full text
     row = df[df['Key'] == ticket_key]
     if row.empty:
-        return f"Ticket {ticket_key} not found."
+        ticketFound = False
+        return [ticketFound]
 
     query_text = row['full_text'].values[0]
     
@@ -37,17 +39,24 @@ def find_similar_tickets(ticket_key, top_k=2):
         similarity = 1 - dist  # cosine similarity = 1 - cosine distance
         summary = df.iloc[idx]['Summary']
         description = df.iloc[idx]['Description']
+        assignee = df.iloc[idx]['Assignee']
+        status = df.iloc[idx]['Status']
+        createdDate = df.iloc[idx]['Created Date']
+
         
         similar_tickets.append({
             'Key': key,
             'Similarity': round(similarity, 4),
             'Summary': summary,
-            'Description': description
+            'Description': description,
+            'Assignee': assignee,
+            'Status': status,
+            'Created Date': createdDate
         })
 
         if len(similar_tickets) == top_k:
             break
 
-    return similar_tickets
+    return [ticketFound,similar_tickets]
 
 

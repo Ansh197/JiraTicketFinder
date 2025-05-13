@@ -10,15 +10,16 @@ def home():
 
 @app.route('/form',methods = ['GET','POST'])
 def ticketForm():
+    result = None
     if request.method == 'POST':
         ticketNumber = request.form.get('ticketNumber')
-        result = find_similar_tickets(ticketNumber, top_k=5)
-        for i in result :
-            for key in i :
-                print(key," : ",i[key])
-            print('\n')
+        res = find_similar_tickets(ticketNumber, top_k=5)
+        if res[0] == False:
+            return render_template('ticketNotFound.html')
+        else :
+            result = res[1]
 
-    return render_template('ticketForm.html')
+    return render_template('ticketForm.html',result = result)
 
 if __name__ == '__main__':
     app.run()
